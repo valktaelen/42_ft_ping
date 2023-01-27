@@ -1,32 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   dns.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aartiges <aartiges@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/27 06:03:57 by aartiges          #+#    #+#             */
-/*   Updated: 2023/01/27 06:04:48 by aartiges         ###   ########lyon.fr   */
+/*   Created: 2023/01/27 06:03:48 by aartiges          #+#    #+#             */
+/*   Updated: 2023/01/27 06:04:21 by aartiges         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/includes.h"
 
-int	main(int argc, char const *argv[])
+struct addrinfo	*resolve_dns(const char *host, t_ping *ping)
 {
-	t_ping	ping;
+	struct addrinfo	*res;
+	struct addrinfo	hint;
 
-	bzero(&ping, sizeof(t_ping));
-	if (argc < 2)
-	{
-		dprintf(2, "Usage: ft_ping host");
-		return (1);
-	}
-	// TODO parse command
-	if (ft_ping(argv[1], &ping))
-	{
-		dprintf(2, "ft_ping: %s\n", ping.error);
-		return (1);
-	}
-	return (0);
+	res = NULL;
+	bzero(&hint, sizeof (struct addrinfo));
+	hint.ai_family = PF_INET;
+	getaddrinfo(host, NULL, &hint, &res);
+	if (DEBUG)
+		display_addrinfo(res);
+	if (!res)
+		sprintf(ping->error, "cannot resolve %s: Unknown host", host);
+	return (res);
 }

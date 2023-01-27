@@ -1,32 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   ping.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aartiges <aartiges@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/27 06:03:57 by aartiges          #+#    #+#             */
-/*   Updated: 2023/01/27 06:04:48 by aartiges         ###   ########lyon.fr   */
+/*   Created: 2023/01/27 06:03:52 by aartiges          #+#    #+#             */
+/*   Updated: 2023/01/27 06:05:18 by aartiges         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/includes.h"
 
-int	main(int argc, char const *argv[])
+int	ft_ping(const char *host, t_ping *ping)
 {
-	t_ping	ping;
+	struct addrinfo	*res;
 
-	bzero(&ping, sizeof(t_ping));
-	if (argc < 2)
-	{
-		dprintf(2, "Usage: ft_ping host");
+	res = resolve_dns(host, ping);
+	if (!res)
 		return (1);
-	}
-	// TODO parse command
-	if (ft_ping(argv[1], &ping))
-	{
-		dprintf(2, "ft_ping: %s\n", ping.error);
-		return (1);
-	}
+	// TODO ping address
+	freeaddrinfo(res);
 	return (0);
 }
