@@ -4,9 +4,9 @@ CC		:=	gcc
 CFLAGS	:=	-Wall -Werror -Wextra
 
 SRCS	:=	srcs/main.c		\
-			srcs/display.c	\
-			srcs/ping.c		\
-			srcs/dns.c		
+			srcs/pars.c		\
+			srcs/utils.c	\
+
 OBJS	:=	$(SRCS:.c=.o)
 
 all:	$(NAME)
