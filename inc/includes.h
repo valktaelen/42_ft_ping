@@ -46,6 +46,7 @@ typedef struct s_ping
 }	t_ping;
 */
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -55,14 +56,19 @@ typedef struct s_ping
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <netinet/ip.h>
+#include <netinet/ip_icmp.h>
 #include <time.h>
 #include <sys/time.h>
+#include <netdb.h>
+#include <signal.h>
+#include <limits.h>
 
 #define ICMP_ECHO_REQUEST 8
 #define ICMP_ECHO_REPLY 0
 #define ICMP_HEADER_LEN 8
-#define IP_HEADER_LEN 20
 #define BUFFER_SIZE 1024
+#define DEBUG_PARSING 0
 
 
 typedef	struct icmp_packet {
@@ -78,7 +84,13 @@ typedef	struct s_ping
 {
 	t_icmp_packet		icmp_template;
 	struct sockaddr_in	host_addr;
+	struct sockaddr		cur_addr;
 	struct timeval		timeout;
+	struct timeval		deadline;
+	struct timeval		deadline_time;
+	double				rtt_min;
+	double				rtt_max;
+	double				rtt_sum;
 	int					sockfd;
 	int					ttl;
 	int					count;
@@ -90,6 +102,10 @@ typedef	struct s_ping
 }	t_ping;
 
 int				parsing(const int argc, const char **argv, t_ping*	ping);
-unsigned short	checksum(unsigned short *buf, int len);
+void			display_help(int fd);
+uint16_t		compute_icmp_checksum(const void *buff, int length);
+void			end_prg(int sig);
+
+extern int	end;
 
 #endif

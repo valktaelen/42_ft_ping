@@ -1,7 +1,7 @@
 NAME	:=	ft_ping
 
 CC		:=	gcc
-CFLAGS	:=	-Wall -Werror -Wextra
+CFLAGS	:=	-Wall -Werror -Wextra -fsanitize=address -g3
 
 SRCS	:=	srcs/main.c		\
 			srcs/pars.c		\
@@ -19,3 +19,5 @@ clean:
 
 fclean: clean
 	rm -rf $(NAME)
+
+re: fclean all
