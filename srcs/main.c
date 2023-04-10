@@ -35,7 +35,7 @@ static int send_ping(t_ping* ping, int seq_num) {
 	num_bytes_sent = sendto(ping->sockfd, &icmp_pkt, packet_len, 0,
 							(struct sockaddr*)(&(ping->host_addr)), sizeof(ping->host_addr));
 	if (num_bytes_sent < 0) {
-		perror("sendto");
+		//perror("sendto");
 		return -1;
 	}
 	return 0;
@@ -55,8 +55,8 @@ static int receive_ping(t_ping *ping, int seq_num, long *rtt, ssize_t* icmp_pkt_
 	num_bytes_rcvd = recvfrom(ping->sockfd, buffer, BUFFER_SIZE, 0,
 							  &(ping->cur_addr), &addrlen);
 	if (num_bytes_rcvd < 0) {
-		if (EAGAIN != errno)
-			perror("recvfrom");
+		/*if (EAGAIN != errno)
+			perror("recvfrom");*/
 		return -1;
 	}
 	gettimeofday(&tv_recv, NULL);
@@ -100,7 +100,7 @@ static int	ft_init_ping(t_ping* ping) {
 		ping->host_addr = *sa_in;
 		inet_ntop(AF_INET, &(ping->host_addr.sin_addr), ping->ip_str, INET_ADDRSTRLEN);
 		if ((ping->sockfd = socket(rp->ai_family, SOCK_RAW, IPPROTO_ICMP)) < 0) {
-			perror("socket");
+			//perror("socket");
 			continue;
 		}
 		break;
@@ -111,12 +111,12 @@ static int	ft_init_ping(t_ping* ping) {
 		return -1;
 	}
 	if (setsockopt(ping->sockfd, IPPROTO_IP, IP_TTL, &(ping->ttl), sizeof(ping->ttl)) < 0) {
-		perror("setsockopt");
+		//perror("setsockopt");
 		close(ping->sockfd);
 		return 1;
 	}
 	if (setsockopt(ping->sockfd, SOL_SOCKET, SO_RCVTIMEO, &(ping->timeout), sizeof(ping->timeout)) < 0) {
-		perror("setsockopt");
+		//perror("setsockopt");
 		close(ping->sockfd);
 		return 1;
 	}
