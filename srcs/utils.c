@@ -10,6 +10,8 @@ void	display_help(int fd) {
 \t-t\t\ttime to live <integer>\n\
 \t-W\t\ttimeout <integer in second>\n\
 \t-w\t\tdeadline <integer in second>\n\
+\t-q\t\tquiet\n\
+\t-4\t\tipv4 only\n\
 \n");
 }
 

@@ -152,7 +152,8 @@ static int ft_ping(t_ping* ping) {
 		if (ping->deadline.tv_sec != 0 && (now.tv_sec > ping->deadline_time.tv_sec || (now.tv_sec == ping->deadline_time.tv_sec && now.tv_usec >= ping->deadline_time.tv_usec)))
 			break;
 		if (send_ping(ping, seq_num) < 0) {
-			printf("Error sending ICMP packet\n");
+			if (DEBUG_EXEC)
+				printf("Error sending ICMP packet\n");
 			continue;
 		}
 		++(ping->packets_sent);
@@ -161,30 +162,36 @@ static int ft_ping(t_ping* ping) {
 		if ((ret = receive_ping(ping, seq_num, &rtt, &size, &ip)) < 0) {
 			// error
 			if (ret == -2) {
-				addr = (struct sockaddr_in *)(&ping->cur_addr);;
-				bzero(ip_str, INET_ADDRSTRLEN);
-				inet_ntop(AF_INET, &(addr->sin_addr), ip_str, INET_ADDRSTRLEN);
-				bzero(domain, NI_MAXHOST);
-				if (getnameinfo(&(ping->cur_addr), sizeof(struct sockaddr), domain, NI_MAXHOST, NULL, 0, 0))
-					printf("From %s (%s) icmp_seq=x Time to live exceeded\n", ip_str, ip_str);
-				else
-					printf("From %s (%s) icmp_seq=x Time to live exceeded\n", domain, ip_str);
+				if (!ping->quiet) {
+					addr = (struct sockaddr_in *)(&ping->cur_addr);;
+					bzero(ip_str, INET_ADDRSTRLEN);
+					inet_ntop(AF_INET, &(addr->sin_addr), ip_str, INET_ADDRSTRLEN);
+					bzero(domain, NI_MAXHOST);
+					if (getnameinfo(&(ping->cur_addr), sizeof(struct sockaddr), domain, NI_MAXHOST, NULL, 0, 0))
+						printf("From %s (%s) icmp_seq=x Time to live exceeded\n", ip_str, ip_str);
+					else
+						printf("From %s (%s) icmp_seq=x Time to live exceeded\n", domain, ip_str);
+				}
 				++error;
 			} else if (ret == -1) {
-				printf("Request timed out\n");
+				if (DEBUG_EXEC)
+					printf("Request timed out\n");
 			}
 			else {
-				printf("Not send by me\n");
+				if (DEBUG_EXEC)
+					printf("Not send by me\n");
 			}
 		} else {
 			// success
-			bzero(domain, NI_MAXHOST);
-			printf("%ld bytes from ", size);
-			if (getnameinfo(&(ping->cur_addr), sizeof(struct sockaddr), domain, NI_MAXHOST, NULL, 0, 0))
-				printf("%s", ping->ip_str);
-			else
-				printf("%s", domain);
-			printf(" (%s): time=%.2fms TTL=%d\n", ping->ip_str, (double)rtt, ip.ttl);
+			if (!ping->quiet) {
+				bzero(domain, NI_MAXHOST);
+				printf("%ld bytes from ", size);
+				if (getnameinfo(&(ping->cur_addr), sizeof(struct sockaddr), domain, NI_MAXHOST, NULL, 0, 0))
+					printf("%s", ping->ip_str);
+				else
+					printf("%s", domain);
+				printf(" (%s): time=%.2fms TTL=%d\n", ping->ip_str, (double)rtt, ip.ttl);
+			}
 			++(ping->packets_rcvd);
 		}
 		++count;

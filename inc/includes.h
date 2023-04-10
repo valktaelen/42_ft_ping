@@ -69,6 +69,7 @@ typedef struct s_ping
 #define ICMP_HEADER_LEN 8
 #define BUFFER_SIZE 1024
 #define DEBUG_PARSING 0
+#define DEBUG_EXEC 0
 
 
 typedef	struct icmp_packet {
@@ -97,6 +98,7 @@ typedef	struct s_ping
 	int					packets_sent;
 	int					packets_rcvd;
 	char				verbose;
+	char				quiet;
 	char				ip_str[INET_ADDRSTRLEN];
 	char*				domain;
 }	t_ping;

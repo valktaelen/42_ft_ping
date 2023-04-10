@@ -13,6 +13,10 @@ int	parsing(const int argc, const char **argv, t_ping*	ping) {
 			else
 				return (1);
 		} else {
+			if (!argv[i][1] || argv[i][2]) {
+				dprintf(2, "Error: Unknown flag %s\n", argv[i]);
+				return 1;
+			}
 			if (argv[i][1] == 'v')
 				ping->verbose = 1;
 			else if (argv[i][1] == 'h')
@@ -56,6 +60,11 @@ int	parsing(const int argc, const char **argv, t_ping*	ping) {
 				if (!ping->deadline.tv_sec && !ping->deadline.tv_usec)
 					return 1;
 				++i;
+			}
+			else if (argv[i][1] == 'q') {
+				ping->quiet = 1;
+			}
+			else if (argv[i][1] == '4') {
 			}
 			else
 				return (1);
