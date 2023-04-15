@@ -31,7 +31,7 @@ static int	parsing_int(int *val, const char **argv, int *i,
 {
 	if (argv[*i + 1] == NULL)
 		return (1);
-	*val = atoi(argv[*i + 1]);
+	*val = ft_atoi(argv[*i + 1]);
 	if (DEBUG_PARSING)
 		printf("%s: %d\n", flag, *val);
 	if (!*val)

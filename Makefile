@@ -10,6 +10,8 @@ SRCS	:=	srcs/main.c		\
 			srcs/ping.c	\
 			srcs/print.c	\
 			srcs/signal.c	\
+			srcs/memory.c	\
+			srcs/network.c	\
 
 OBJS	:=	$(SRCS:.c=.o)
 

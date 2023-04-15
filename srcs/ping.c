@@ -19,11 +19,11 @@ int	send_ping(t_ping *ping)
 	ssize_t			num_bytes_sent;
 	int				packet_len;
 
-	memset(&icmp_pkt, 0, sizeof(icmp_pkt));
+	ft_bzero(&icmp_pkt, sizeof(icmp_pkt));
 	icmp_pkt.type = ICMP_ECHO_REQUEST;
 	icmp_pkt.code = 0;
-	icmp_pkt.id = htons(getpid());
-	icmp_pkt.seq_num = htons(++(ping->seq_num));
+	icmp_pkt.id = ft_htons(getpid());
+	icmp_pkt.seq_num = ft_htons(++(ping->seq_num));
 	gettimeofday(&tv, NULL);
 	icmp_pkt.timestamp = tv;
 	packet_len = ICMP_HEADER_LEN + sizeof(tv);
@@ -43,16 +43,16 @@ int	send_ping(t_ping *ping)
 static int	proceed_receive(t_ping *ping, t_ping_info *infos, char *buffer)
 {
 	gettimeofday(&(infos->tv_recv), NULL);
-	memcpy(&(infos->icmp_hdr), (buffer + sizeof(struct iphdr)),
+	ft_memcpy(&(infos->icmp_hdr), (buffer + sizeof(struct iphdr)),
 		sizeof(struct icmphdr));
 	if (infos->icmp_hdr.type != ICMP_ECHO_REPLY)
 		return (-2);
-	memcpy(&(infos->icmp_pkt), (buffer + sizeof(struct iphdr)),
+	ft_memcpy(&(infos->icmp_pkt), (buffer + sizeof(struct iphdr)),
 		infos->pkt_len - sizeof(struct iphdr));
 	if (infos->icmp_pkt.type != ICMP_ECHO_REPLY
-		|| infos->icmp_pkt.id != htons(getpid()))
+		|| infos->icmp_pkt.id != ft_htons(getpid()))
 		return (-3);
-	memcpy(&(infos->ip), buffer, sizeof(struct iphdr));
+	ft_memcpy(&(infos->ip), buffer, sizeof(struct iphdr));
 	infos->rtt = get_diff_tv((infos->tv_recv), infos->icmp_pkt.timestamp);
 	if (infos->rtt > ping->rtt_max)
 		ping->rtt_max = infos->rtt;

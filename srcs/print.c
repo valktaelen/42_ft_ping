@@ -42,7 +42,30 @@ void	print_success(t_ping *ping, t_ping_info *info)
 	else
 		printf("%s", domain);
 	printf(" (%s): time=%.2lfms TTL=%d, icmp_sec=%d\n", ping->ip_str,
-		info->rtt, info->ip.ttl, ntohs(info->icmp_pkt.seq_num));
+		info->rtt, info->ip.ttl, ft_ntohs(info->icmp_pkt.seq_num));
+}
+
+static const char	*error_response(uint8_t type, uint8_t code)
+{
+	static const char	*rep[] = {
+		"Destination Unreachable", "Source Quench", "Redirect Message",
+		"TTL expired in transit", "Fragment reassembly time exceeded"
+		"Parameter Problem: Bad IP header",
+		"Error type not define",
+	};
+
+	if (type >= ICMP_DEST_UNREACH && type <= ICMP_REDIRECT)
+		return (rep[type - ICMP_DEST_UNREACH]);
+	if (type == ICMP_TIME_EXCEEDED)
+	{
+		if (code == ICMP_EXC_TTL)
+			return (rep[3]);
+		else
+			return (rep[4]);
+	}
+	if (type == ICMP_PARAMETERPROB)
+		return (rep[5]);
+	return (rep[6]);
 }
 
 void	print_error(t_ping *ping, t_ping_info *infos)
@@ -50,9 +73,6 @@ void	print_error(t_ping *ping, t_ping_info *infos)
 	struct sockaddr_in	*addr;
 	char				domain[NI_MAXHOST];
 	char				ip_str[INET_ADDRSTRLEN];
-	int					i;
-	const char			*rep[] = {"Time to live exceeded",
-		"Destination Unreachable", "Error"};
 
 	if (ping->quiet)
 		return ;
@@ -60,18 +80,15 @@ void	print_error(t_ping *ping, t_ping_info *infos)
 	bzero(ip_str, INET_ADDRSTRLEN);
 	inet_ntop(AF_INET, &(addr->sin_addr), ip_str, INET_ADDRSTRLEN);
 	bzero(domain, NI_MAXHOST);
-	i = 2;
-	if (infos->icmp_hdr.type == ICMP_DEST_UNREACH)
-		i = 1;
-	else if (infos->icmp_hdr.type == ICMP_EXC_TTL)
-		i = 0;
 	if (getnameinfo(&(ping->cur_addr), sizeof(struct sockaddr),
 			domain, NI_MAXHOST, NULL, 0, 0))
 		printf("From %s (%s) icmp_seq=%d %s\n",
-			ip_str, ip_str, infos->icmp_pkt.seq_num, rep[i]);
+			ip_str, ip_str, infos->icmp_pkt.seq_num,
+			error_response(infos->icmp_hdr.type, infos->icmp_hdr.code));
 	else
 		printf("From %s (%s) icmp_seq=%d %s\n",
-			domain, ip_str, infos->icmp_pkt.seq_num, rep[i]);
+			domain, ip_str, infos->icmp_pkt.seq_num,
+			error_response(infos->icmp_hdr.type, infos->icmp_hdr.code));
 }
 
 void	print_resume(t_ping *ping)

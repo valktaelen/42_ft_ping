@@ -54,20 +54,6 @@ int	ft_atoi(const char *str)
 	return ((int)(result * sign));
 }
 
-void	ft_bzero(void *s, size_t n)
-{
-	unsigned char	*array;
-	size_t			index;
-
-	array = s;
-	index = 0;
-	while (index < n)
-	{
-		array[index] = 0;
-		index++;
-	}
-}
-
 long	get_diff_tv(struct timeval tv_recv, struct timeval tv_send)
 {
 	struct timeval	tv_diff;

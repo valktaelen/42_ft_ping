@@ -103,6 +103,10 @@ void		print_success(t_ping *ping, t_ping_info *info);
 void		print_error(t_ping *ping, t_ping_info *info);
 void		print_resume(t_ping *ping);
 
+void		*ft_memcpy(void *dst, const void *src, size_t n);
 void		ft_bzero(void *s, size_t n);
+
+uint16_t	ft_htons(uint16_t n);
+uint16_t	ft_ntohs(uint16_t n);
 
 #endif
