@@ -6,7 +6,7 @@
 /*   By: aartiges <aartiges@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 04:47:01 by aartiges          #+#    #+#             */
-/*   Updated: 2023/04/15 22:32:58 by aartiges         ###   ########lyon.fr   */
+/*   Updated: 2023/04/15 23:17:36 by aartiges         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,28 @@ int	send_ping(t_ping *ping)
 	return (0);
 }
 
+static int	proceed_receive(t_ping *ping, t_ping_info *infos, char *buffer)
+{
+	gettimeofday(&(infos->tv_recv), NULL);
+	memcpy(&(infos->icmp_hdr), (buffer + sizeof(struct iphdr)),
+		sizeof(struct icmphdr));
+	if (infos->icmp_hdr.type != ICMP_ECHO_REPLY)
+		return (-2);
+	memcpy(&(infos->icmp_pkt), (buffer + sizeof(struct iphdr)),
+		infos->pkt_len - sizeof(struct iphdr));
+	if (infos->icmp_pkt.type != ICMP_ECHO_REPLY
+		|| infos->icmp_pkt.id != htons(getpid()))
+		return (-3);
+	memcpy(&(infos->ip), buffer, sizeof(struct iphdr));
+	infos->rtt = get_diff_tv((infos->tv_recv), infos->icmp_pkt.timestamp);
+	if (infos->rtt > ping->rtt_max)
+		ping->rtt_max = infos->rtt;
+	if (infos->rtt < ping->rtt_min)
+		ping->rtt_min = infos->rtt;
+	ping->rtt_sum += infos->rtt;
+	return (0);
+}
+
 static int	receive_ping(t_ping *ping, t_ping_info *infos)
 {
 	char			buffer[BUFFER_SIZE];
@@ -56,21 +78,7 @@ static int	receive_ping(t_ping *ping, t_ping_info *infos)
 			dprintf(2, "recvfrom: %s\n", strerror(errno));
 		return (-1);
 	}
-	gettimeofday(&(infos->tv_recv), NULL);
-	memcpy(&(infos->icmp_hdr), (buffer + sizeof(struct iphdr)), sizeof(struct icmphdr));
-	if (infos->icmp_hdr.type != ICMP_ECHO_REPLY)
-		return (-2);
-	memcpy(&(infos->icmp_pkt), (buffer + sizeof(struct iphdr)), infos->pkt_len - sizeof(struct iphdr));
-	if (infos->icmp_pkt.type != ICMP_ECHO_REPLY || infos->icmp_pkt.id != htons(getpid()) /*|| infos->icmp_pkt.seq_num != htons(seq_num)*/)
-		return (-3);
-	memcpy(&(infos->ip), buffer, sizeof(struct iphdr));
-	infos->rtt = get_diff_tv((infos->tv_recv), infos->icmp_pkt.timestamp);
-	if (infos->rtt > ping->rtt_max)
-		ping->rtt_max = infos->rtt;
-	if (infos->rtt < ping->rtt_min)
-		ping->rtt_min = infos->rtt;
-	ping->rtt_sum += infos->rtt;
-	return (0);
+	return (proceed_receive(ping, infos, buffer));
 }
 
 static int	ft_init_ping(t_ping *ping)
