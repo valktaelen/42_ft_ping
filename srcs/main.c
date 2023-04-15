@@ -6,13 +6,11 @@
 /*   By: aartiges <aartiges@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/01/27 06:03:57 by aartiges          #+#    #+#             */
-/*   Updated: 2023/04/15 20:39:36 by aartiges         ###   ########lyon.fr   */
+/*   Updated: 2023/04/15 23:18:59 by aartiges         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/includes.h"
-
-int	g_end = 0;
 
 int	main(int argc, const char *argv[])
 {

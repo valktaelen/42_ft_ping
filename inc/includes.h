@@ -12,39 +12,6 @@
 
 #ifndef INCLUDES_H
 # define INCLUDES_H
-/*
-
-# include <errno.h>
-# include <stdlib.h>
-# include <stdio.h>
-# include <unistd.h>
-# include <signal.h>
-# include <netdb.h>
-# include <string.h>
-
-# include <sys/types.h>
-# include <sys/time.h>
-# include <sys/socket.h>
-
-# include <arpa/inet.h>
-# include <netinet/ip.h>
-# include <netinet/ip_icmp.h>
-
-# define DEBUG 1
-typedef struct s_ping
-{
-	char				error[512];
-	char				buf[1024];
-	char				*domain;
-	struct sockaddr_in	target;
-	struct icmp			icmp_header;
-	int			seq;
-	short				verbose;
-	int					ttl;
-	int					timeout;
-	int					sock_fd;
-}	t_ping;
-*/
 
 # include <errno.h>
 # include <stdio.h>
