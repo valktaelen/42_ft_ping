@@ -1,33 +1,49 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aartiges <aartiges@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/01/27 06:03:57 by aartiges          #+#    #+#             */
-/*   Updated: 2023/04/15 20:39:36 by aartiges         ###   ########lyon.fr   */
+/*   Created: 2023/04/15 20:18:55 by aartiges          #+#    #+#             */
+/*   Updated: 2023/04/15 22:36:10 by aartiges         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../inc/includes.h"
 
-int	g_end = 0;
+t_ping	*get_ping(void)
+{
+	static t_ping	ping;
 
-int	main(int argc, const char *argv[])
+	return (&ping);
+}
+
+void	end_prg(int sig)
 {
 	t_ping	*ping;
-	int		ret;
 
+	if (sig == SIGINT)
+	{
+		ping = get_ping();
+		ping->end = 1;
+	}
+}
+
+void	handler_alarm(int sig)
+{
+	t_ping	*ping;
+
+	if (sig != SIGALRM)
+		return ;
 	ping = get_ping();
-	ft_bzero(ping, sizeof(t_ping));
-	ping->ttl = 64;
-	ping->timeout.tv_sec = 1;
-	ret = parsing(argc, argv, ping);
-	if (ret == 1)
-		display_help(2);
-	if (ret)
-		return (1);
-	ft_ping(ping);
-	return (0);
+	if (is_finish(ping))
+		return ;
+	if (send_ping(ping) < 0)
+	{
+		if (DEBUG_EXEC)
+			dprintf(2, "Error sending ICMP packet\n");
+	}
+	++(ping->packets_sent);
+	alarm(1);
 }

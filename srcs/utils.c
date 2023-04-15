@@ -1,36 +1,98 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: aartiges <aartiges@student.42lyon.fr>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2023/04/15 01:46:05 by aartiges          #+#    #+#             */
+/*   Updated: 2023/04/15 22:29:36 by aartiges         ###   ########lyon.fr   */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../inc/includes.h"
 
-void	display_help(int fd) {
-	dprintf(fd, "\nUsage\nft_ping [options] <destination>\n\
-\nOptions:\n\
-\t<destination>\tdns name or ip address\n\
-\t-v\t\tverbose output\n\
-\t-h\t\thelp\n\
-\t-c\t\tcount <integer>\n\
-\t-t\t\ttime to live <integer>\n\
-\t-W\t\ttimeout <integer in second>\n\
-\t-w\t\tdeadline <integer in second>\n\
-\t-q\t\tquiet\n\
-\t-4\t\tipv4 only\n\
-\n");
-}
-
-uint16_t compute_icmp_checksum(const void *buff, int length) {
+uint16_t	compute_icmp_checksum(const void *buff, int length)
+{
 	const uint16_t	*ptr = buff;
 	uint32_t		sum;
 
-	for (sum = 0; length > 1; length -= 2) {
+	sum = 0;
+	while (length > 1)
+	{
 		sum += *ptr++;
+		length -= 2;
 	}
-	if (length == 1) {
-		sum += *(uint8_t*)ptr;
-	}
+	if (length == 1)
+		sum += *(uint8_t *) ptr;
 	sum = (sum >> 16) + (sum & 0xffff);
 	sum += (sum >> 16);
-	return ~sum;
+	return (~sum);
 }
 
-void	end_prg(int sig) {
-	if (sig == SIGINT)
-		end = 1;
+int	ft_atoi(const char *str)
+{
+	long	result;
+	long	sign;
+
+	result = 0;
+	sign = 1;
+	if (*str == '-')
+	{
+		sign = -1;
+		str++;
+	}
+	else if (*str == '+')
+		str++;
+	while (*str >= '0' && *str <= '9')
+	{
+		if (result > INT_MAX)
+			return (0);
+		result = result * 10 + (*str - '0');
+		str++;
+	}
+	return ((int)(result * sign));
+}
+
+void	ft_bzero(void *s, size_t n)
+{
+	unsigned char	*array;
+	size_t			index;
+
+	array = s;
+	index = 0;
+	while (index < n)
+	{
+		array[index] = 0;
+		index++;
+	}
+}
+
+long	get_diff_tv(struct timeval tv_recv, struct timeval tv_send)
+{
+	struct timeval	tv_diff;
+
+	tv_diff.tv_sec = tv_recv.tv_sec - tv_send.tv_sec;
+	tv_diff.tv_usec = tv_recv.tv_usec - tv_send.tv_usec;
+	return (
+		(double)tv_diff.tv_sec * 1000.
+		+ (double)tv_diff.tv_usec / 1000.);
+}
+
+int	is_finish(t_ping *ping)
+{
+	struct timeval	now;
+
+	if (ping->end)
+		return (1);
+	if (ping->count && ping->count == ping->packets_sent
+		&& ping->packets_sent == ping->packets_rcvd + ping->error)
+		return (3);
+	gettimeofday(&now, NULL);
+	if (ping->deadline.tv_sec != 0
+		&& (now.tv_sec > ping->deadline_time.tv_sec
+			|| (now.tv_sec == ping->deadline_time.tv_sec
+				&& now.tv_usec >= ping->deadline_time.tv_usec)))
+		return (2);
+	return (0);
 }
