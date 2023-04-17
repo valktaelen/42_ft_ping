@@ -36,7 +36,7 @@
 # define ICMP_HEADER_LEN 8
 # define BUFFER_SIZE 1024
 # define DEBUG_PARSING 0
-# define DEBUG_EXEC 1
+# define DEBUG_EXEC 0
 
 typedef struct s_icmp_packet {
 	uint8_t			type;

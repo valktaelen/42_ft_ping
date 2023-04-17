@@ -108,7 +108,7 @@ int	ft_ping(t_ping *ping)
 	ft_bzero(&infos, sizeof(t_ping_info));
 	while (!is_finish(ping))
 	{
-		if (receive_ping(ping, &infos) < 0)
+		if (receive_ping(ping, &infos) < -1)
 		{
 			print_error(ping, &infos);
 			++(ping->error);
