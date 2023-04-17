@@ -71,9 +71,25 @@ int	is_finish(t_ping *ping)
 
 	if (ping->end)
 		return (1);
-	if (ping->count && ping->count == ping->packets_sent
-		&& ping->packets_sent == ping->packets_rcvd + ping->error
-		+ ping->sys_error)
+	if (ping->count && ping->count == ping->packets_rcvd
+		+ ping->error + ping->sys_error)
+		return (3);
+	gettimeofday(&now, NULL);
+	if (ping->deadline.tv_sec != 0
+		&& (now.tv_sec > ping->deadline_time.tv_sec
+			|| (now.tv_sec == ping->deadline_time.tv_sec
+				&& now.tv_usec >= ping->deadline_time.tv_usec)))
+		return (2);
+	return (0);
+}
+
+int	is_finish_handler(t_ping *ping)
+{
+	struct timeval	now;
+
+	if (ping->end)
+		return (1);
+	if (ping->count && ping->count == ping->packets_sent)
 		return (3);
 	gettimeofday(&now, NULL);
 	if (ping->deadline.tv_sec != 0

@@ -37,7 +37,7 @@ void	handler_alarm(int sig)
 	if (sig != SIGALRM)
 		return ;
 	ping = get_ping();
-	if (is_finish(ping))
+	if (is_finish_handler(ping))
 		return ;
 	if (send_ping(ping) < 0)
 	{
