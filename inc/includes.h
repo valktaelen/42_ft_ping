@@ -66,6 +66,7 @@ typedef struct s_ping
 	int					packets_sent;
 	int					packets_rcvd;
 	int					error;
+	int					sys_error;
 	uint8_t				verbose;
 	uint8_t				quiet;
 	char				ip_str[INET_ADDRSTRLEN];

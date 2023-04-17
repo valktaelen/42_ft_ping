@@ -72,7 +72,8 @@ int	is_finish(t_ping *ping)
 	if (ping->end)
 		return (1);
 	if (ping->count && ping->count == ping->packets_sent
-		&& ping->packets_sent == ping->packets_rcvd + ping->error)
+		&& ping->packets_sent == ping->packets_rcvd + ping->error
+		+ ping->sys_error)
 		return (3);
 	gettimeofday(&now, NULL);
 	if (ping->deadline.tv_sec != 0

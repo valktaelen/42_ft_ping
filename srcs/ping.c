@@ -76,6 +76,7 @@ static int	receive_ping(t_ping *ping, t_ping_info *infos)
 	{
 		if (DEBUG_EXEC)
 			dprintf(2, "recvfrom: %s\n", strerror(errno));
+		++(ping->sys_error);
 		return (-1);
 	}
 	return (proceed_receive(ping, infos, buffer));
