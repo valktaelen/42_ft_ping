@@ -54,7 +54,7 @@ int	ft_atoi(const char *str)
 	return ((int)(result * sign));
 }
 
-long	get_diff_tv(struct timeval tv_recv, struct timeval tv_send)
+double	get_diff_tv(struct timeval tv_recv, struct timeval tv_send)
 {
 	struct timeval	tv_diff;
 

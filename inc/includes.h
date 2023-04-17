@@ -94,7 +94,7 @@ int			ft_ping(t_ping *ping);
 int			init_socket(t_ping *ping);
 
 uint16_t	compute_icmp_checksum(const void *buff, int length);
-long		get_diff_tv(struct timeval tv_recv, struct timeval tv_send);
+double		get_diff_tv(struct timeval tv_recv, struct timeval tv_send);
 int			is_finish(t_ping *ping);
 int			ft_atoi(const char *str);
 
