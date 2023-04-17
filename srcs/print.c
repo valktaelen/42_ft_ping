@@ -49,9 +49,9 @@ static const char	*error_response(uint8_t type, uint8_t code)
 {
 	static const char	*rep[] = {
 		"Destination Unreachable", "Source Quench", "Redirect Message",
-		"TTL expired in transit", "Fragment reassembly time exceeded"
+		"TTL expired in transit", "Fragment reassembly time exceeded",
 		"Parameter Problem: Bad IP header",
-		"Error type not define",
+		"Error type not define"
 	};
 
 	if (type >= ICMP_DEST_UNREACH && type <= ICMP_REDIRECT)

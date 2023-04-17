@@ -6,7 +6,7 @@
 /*   By: aartiges <aartiges@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/15 04:47:01 by aartiges          #+#    #+#             */
-/*   Updated: 2023/04/15 23:17:36 by aartiges         ###   ########lyon.fr   */
+/*   Updated: 2023/04/16 03:52:13 by aartiges         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ int	send_ping(t_ping *ping)
 static int	proceed_receive(t_ping *ping, t_ping_info *infos, char *buffer)
 {
 	gettimeofday(&(infos->tv_recv), NULL);
+	ft_memcpy(&(infos->ip), buffer, sizeof(struct iphdr));
 	ft_memcpy(&(infos->icmp_hdr), (buffer + sizeof(struct iphdr)),
 		sizeof(struct icmphdr));
 	if (infos->icmp_hdr.type != ICMP_ECHO_REPLY)
@@ -52,7 +53,6 @@ static int	proceed_receive(t_ping *ping, t_ping_info *infos, char *buffer)
 	if (infos->icmp_pkt.type != ICMP_ECHO_REPLY
 		|| infos->icmp_pkt.id != ft_htons(getpid()))
 		return (-3);
-	ft_memcpy(&(infos->ip), buffer, sizeof(struct iphdr));
 	infos->rtt = get_diff_tv((infos->tv_recv), infos->icmp_pkt.timestamp);
 	if (infos->rtt > ping->rtt_max)
 		ping->rtt_max = infos->rtt;
