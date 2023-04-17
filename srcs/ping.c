@@ -95,32 +95,33 @@ static int	ft_init_ping(t_ping *ping)
 	signal(SIGALRM, handler_alarm);
 	printf("PING %s (%s) using protocol ICMP\n", ping->domain, ping->ip_str);
 	ping->end = 0;
+	handler_alarm(SIGALRM);
 	return (0);
 }
 
 int	ft_ping(t_ping *ping)
 {
-	t_ping_info			infos;
+	t_ping_info	infos;
+	int			ret;
 
 	if (ft_init_ping(ping))
 		return (1);
-	handler_alarm(SIGALRM);
 	ft_bzero(&infos, sizeof(t_ping_info));
 	while (!is_finish(ping))
 	{
-		if (receive_ping(ping, &infos) < -1)
+		ret = receive_ping(ping, &infos);
+		if (ret < -1)
 		{
 			print_error(ping, &infos);
 			++(ping->error);
 		}
-		else
+		else if (ret != -1)
 		{
 			print_success(ping, &infos);
 			++(ping->packets_rcvd);
 		}
-		if (is_finish(ping))
-			break ;
-		usleep(1000000);
+		if (!is_finish(ping))
+			usleep(1000000);
 	}
 	print_resume(ping);
 	close(ping->sockfd);
