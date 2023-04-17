@@ -110,7 +110,5 @@ int	parsing(const int argc, const char **argv, t_ping *ping)
 	}
 	if (ping->domain == NULL)
 		return ((dprintf(2, "Usage error: destination require\n") & 0) + 2);
-	if (ping->count && ping->deadline.tv_sec)
-		ping->deadline.tv_sec = 0;
 	return (0);
 }
