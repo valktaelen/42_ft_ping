@@ -34,7 +34,7 @@ void	print_success(t_ping *ping, t_ping_info *info)
 
 	if (ping->quiet)
 		return ;
-	bzero(domain, NI_MAXHOST);
+	ft_bzero(domain, NI_MAXHOST);
 	printf("%ld bytes from ", info->pkt_len);
 	if (getnameinfo(&(ping->cur_addr), sizeof(struct sockaddr),
 			domain, NI_MAXHOST, NULL, 0, 0))
@@ -77,9 +77,9 @@ void	print_error(t_ping *ping, t_ping_info *infos)
 	if (ping->quiet)
 		return ;
 	addr = (struct sockaddr_in *)(&ping->cur_addr);
-	bzero(ip_str, INET_ADDRSTRLEN);
+	ft_bzero(ip_str, INET_ADDRSTRLEN);
 	inet_ntop(AF_INET, &(addr->sin_addr), ip_str, INET_ADDRSTRLEN);
-	bzero(domain, NI_MAXHOST);
+	ft_bzero(domain, NI_MAXHOST);
 	if (getnameinfo(&(ping->cur_addr), sizeof(struct sockaddr),
 			domain, NI_MAXHOST, NULL, 0, 0))
 		printf("From %s (%s) icmp_seq=%d %s\n",
