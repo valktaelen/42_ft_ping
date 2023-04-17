@@ -1,7 +1,9 @@
 NAME	:=	ft_ping
 
 CC		:=	gcc
-CFLAGS	:=	-Wall -Werror -Wextra -fsanitize=address -g3
+CFLAGS	:=	-Wall -Werror -Wextra # -fsanitize=address -g3
+
+INC		:=	inc/includes.h
 
 SRCS	:=	srcs/main.c		\
 			srcs/pars.c		\
@@ -17,10 +19,10 @@ OBJS	:=	$(SRCS:.c=.o)
 
 all:	$(NAME)
 
-$(NAME):	inc/includes.h $(OBJS)
+$(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
-%.o:	%.c inc/includes.h
+%.o:	%.c $(INC)
 	${CC} ${CFLAGS} -c $< -o $@ 
 
 clean:
