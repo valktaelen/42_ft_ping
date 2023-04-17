@@ -27,6 +27,10 @@ void	end_prg(int sig)
 	{
 		ping = get_ping();
 		ping->end = 1;
+		ping->quiet = 1;
+		print_resume(ping);
+		close(ping->sockfd);
+		exit(1);
 	}
 }
 
